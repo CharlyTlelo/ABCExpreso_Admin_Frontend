@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-grupo-admin',
@@ -21,12 +22,15 @@ export class GrupoAdminComponent implements OnInit {
   };
   defaultImage = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.cargarColaboradores();
   }
-  
+
   rolClass(rol: string): string {
     switch (rol) {
       case 'gerente':
@@ -59,5 +63,9 @@ export class GrupoAdminComponent implements OnInit {
         this.cargarColaboradores();
       });
     }
+  }
+
+  volverAlDashboard(){
+    this.router.navigate(['/dashboard']);
   }
 }

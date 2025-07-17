@@ -4,8 +4,20 @@
     <h4>Lista de Colaboradores</h4>
   </div>
 
+  <!--Agregar Colaborador-->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+      <i class="fas fa-user-plus"></i> Agregar Colaborador
+    </button>
+    
+    <button class="btn btn-outline-secondary" (click)="volverAlDashboard()">
+      <i class="fas fa-arrow-left"></i> Regresar
+    </button>
+  </div>
+
   <table class="table table-bordered table-hover table-sm text-center align-middle">
-    <thead class="table-dark">
+    <thead class="table-light ">
       <tr>
         <th>Foto</th>
         <th>Nombre</th>
@@ -35,16 +47,36 @@
     </tbody>
   </table>
 
-  <div class="card mt-4 p-3">
-    <h5>Agregar Colaborador</h5>
-    <input class="form-control mb-2" [(ngModel)]="colaborador.nombreCompleto" placeholder="Nombre completo">
-    <input class="form-control mb-2" [(ngModel)]="colaborador.puesto" placeholder="Puesto">
-    <select class="form-control mb-2" [(ngModel)]="colaborador.rol">
-      <option value="gerente">Gerente</option>
-      <option value="lider">Líder</option>
-      <option value="desarrollo">Desarrollo</option>
-    </select>
-    <input class="form-control mb-2" [(ngModel)]="colaborador.fotoUrl" placeholder="URL de la foto">
-    <button class="btn btn-success w-100" (click)="agregarColaborador()">Guardar</button>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAgregarLabel">Agregar Colaborador</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <input class="form-control mb-2" [(ngModel)]="colaborador.nombreCompleto" placeholder="Nombre completo">
+        <input class="form-control mb-2" [(ngModel)]="colaborador.puesto" placeholder="Puesto">
+        <select class="form-control mb-2" [(ngModel)]="colaborador.rol">
+          <option value="gerente">Gerente</option>
+          <option value="lider">Líder</option>
+          <option value="desarrollo">Desarrollo</option>
+        </select>
+        <input class="form-control mb-2" [(ngModel)]="colaborador.fotoUrl" placeholder="URL de la foto">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button type="button" class="btn btn-success" (click)="agregarColaborador()" data-bs-dismiss="modal">
+          <i class="fas fa-check"></i> Agregar
+        </button>
+      </div>
+    </div>
   </div>
 </div>
+
