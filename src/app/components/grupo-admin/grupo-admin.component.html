@@ -1,62 +1,57 @@
-
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h4>Lista de Colaboradores</h4>
   </div>
 
-  <!--Agregar Colaborador-->
-  <div class="d-flex justify-content-between align-items-center mb-3">
 
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregar">
-      <i class="fas fa-user-plus"></i> Agregar Colaborador
-    </button>
-    
-    <button class="btn btn-outline-secondary" (click)="volverAlDashboard()">
-      <i class="fas fa-arrow-left"></i> Regresar
-    </button>
-  </div>
-
-  <table class="table table-bordered table-hover table-sm text-center align-middle">
-    <thead class="table-light ">
-      <tr>
-        <th>Foto</th>
-        <th>Nombre</th>
-        <th>Puesto</th>
-        <th>Rol</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let colaborador of colaboradores">
-        <td>
-          <img [src]="colaborador.fotoUrl || defaultImage" width="40" height="40" class="rounded-circle" />
-        </td>
-        <td>{{ colaborador.nombreCompleto }}</td>
-        <td>{{ colaborador.puesto }}</td>
-        <td>
-          <span class="badge" [ngClass]="rolClass(colaborador.rol)">
-            {{ colaborador.rol }}
-          </span>
-        </td>
-        <td>
-          <button class="btn btn-danger btn-sm" (click)="eliminar(colaborador.id)">
-            <i class="fas fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
+<!-- Botones superiores -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <button class="btn btn-primary" (click)="abrirModal()">
+    <i class="fas fa-user-plus"></i> Agregar Colaborador
+  </button>
+  <button class="btn btn-outline-secondary" (click)="regresar()">
+    <i class="fas fa-arrow-left"></i> Regresar
+  </button>
 </div>
 
+ <!-- Tabla de Colaboradores -->
+<table class="table table-bordered table-hover text-center">
+  <thead class="table-dark">
+    <tr>
+      <th>Foto</th>
+      <th>Nombre</th>
+      <th>Puesto</th>
+      <th>Rol</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let colaborador of colaboradores">
+      <td><img [src]="colaborador.fotoUrl || defaultImage" width="40" height="40" class="rounded-circle" /></td>
+      <td>{{ colaborador.nombreCompleto }}</td>
+      <td>{{ colaborador.puesto }}</td>
+      <td><span class="badge bg-info text-white">{{ colaborador.rol }}</span></td>
+      <td>
+        <button class="btn btn-warning btn-sm me-1" (click)="editarColaborador(colaborador)">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="eliminar(colaborador.id)">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-<!-- Modal -->
-<div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
+<!-- Modal reutilizable para Agregar / Editar -->
+<div class="modal fade show" tabindex="-1" style="display: block;" *ngIf="modalVisible">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalAgregarLabel">Agregar Colaborador</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <h5 class="modal-title">
+          {{ esEdicion ? 'Editar Colaborador' : 'Agregar Colaborador' }}
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="cerrarModal()"></button>
       </div>
       <div class="modal-body">
         <input class="form-control mb-2" [(ngModel)]="colaborador.nombreCompleto" placeholder="Nombre completo">
@@ -69,14 +64,17 @@
         <input class="form-control mb-2" [(ngModel)]="colaborador.fotoUrl" placeholder="URL de la foto">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <button class="btn btn-secondary" (click)="cerrarModal()">
           <i class="fas fa-times"></i> Cancelar
         </button>
-        <button type="button" class="btn btn-success" (click)="agregarColaborador()" data-bs-dismiss="modal">
-          <i class="fas fa-check"></i> Agregar
+        <button class="btn btn-success" *ngIf="!esEdicion" (click)="guardarColaborador()">
+          <i class="fas fa-save"></i> Guardar
+        </button>
+        <button class="btn btn-primary" *ngIf="esEdicion" (click)="actualizarColaborador()">
+          <i class="fas fa-sync-alt"></i> Actualizar
         </button>
       </div>
     </div>
   </div>
 </div>
-
+</div>

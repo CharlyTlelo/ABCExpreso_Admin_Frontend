@@ -4,6 +4,8 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-grupo-admin',
@@ -12,9 +14,11 @@ import { Router } from '@angular/router';
   templateUrl: './grupo-admin.component.html',
   styleUrls: ['./grupo-admin.component.scss']
 })
+
 export class GrupoAdminComponent implements OnInit {
   colaboradores: any[] = [];
   colaborador = {
+    id: 0,
     nombreCompleto: '',
     puesto: '',
     rol: '',
@@ -22,50 +26,88 @@ export class GrupoAdminComponent implements OnInit {
   };
   defaultImage = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
-  constructor(
-    private http: HttpClient,
-    private router: Router
-  ) {}
+  // 🔧 Variables de control del modal
+  modalVisible = false;
+  esEdicion = false;
+
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
-    this.cargarColaboradores();
+    this.colaboradores = [
+      {
+        id: 1,
+        nombreCompleto: 'Juan Pérez',
+        puesto: 'Técnico',
+        rol: 'lider',
+        fotoUrl: ''
+      }
+    ];
   }
 
-  rolClass(rol: string): string {
-    switch (rol) {
-      case 'gerente':
-        return 'bg-danger text-white'; // rojo
-      case 'lider':
-        return 'bg-info text-white'; // azul
-      case 'desarrollo':
-        return 'bg-success text-white'; // verde
-      default:
-        return 'bg-secondary text-white'; // por si acaso
+  abrirModal(colab: any = null) {
+    this.modalVisible = true;
+    if (colab) {
+      this.esEdicion = true;
+      this.colaborador = { ...colab };
+    } else {
+      this.esEdicion = false;
+      this.colaborador = {
+        id: 0,
+        nombreCompleto: '',
+        puesto: '',
+        rol: '',
+        fotoUrl: ''
+      };
     }
   }
 
-  cargarColaboradores() {
-    this.http.get<any[]>('http://localhost:8080/api/miembros').subscribe(data => {
-      this.colaboradores = data;
-    });
+  cerrarModal() {
+    this.modalVisible = false;
   }
 
-  agregarColaborador() {
-    this.http.post('http://localhost:8080/api/miembros', this.colaborador).subscribe(() => {
-      this.colaborador = { nombreCompleto: '', puesto: '', rol: '', fotoUrl: '' };
-      this.cargarColaboradores();
-    });
-  }
-
-  eliminar(id: string) {
-    if (confirm('¿Deseas eliminar este colaborador?')) {
-      this.http.delete(`http://localhost:8080/api/miembros/${id}`).subscribe(() => {
-        this.cargarColaboradores();
-      });
+  guardarColaborador() {
+    if (!this.colaborador.nombreCompleto || !this.colaborador.rol) {
+      alert('Por favor, llena todos los campos obligatorios.');
+      return;
     }
+    const nuevo = { ...this.colaborador };
+    nuevo.id = Date.now();
+    this.colaboradores.push(nuevo);
+    this.cerrarModal();
   }
 
-  volverAlDashboard(){
+  editarColaborador(colaborador: any) {
+      this.abrirModal(colaborador);
+    }
+
+
+  actualizarColaborador() {
+    const index = this.colaboradores.findIndex(c => c.id === this.colaborador.id);
+    if (index !== -1) {
+      this.colaboradores[index] = { ...this.colaborador };
+    }
+    this.cerrarModal();
+  }
+
+  eliminar(id: number) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.colaboradores = this.colaboradores.filter(c => c.id !== id);
+        Swal.fire('¡Eliminado!', 'El colaborador ha sido eliminado.', 'success');
+      }
+    });
+  }
+
+  regresar() {
     this.router.navigate(['/dashboard']);
   }
 }
